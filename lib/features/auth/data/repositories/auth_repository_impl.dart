@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../presentation/bloc/auth_bloc.dart';
 import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {

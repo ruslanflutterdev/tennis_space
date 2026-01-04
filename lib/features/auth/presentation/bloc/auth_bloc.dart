@@ -3,6 +3,11 @@ import 'package:equatable/equatable.dart';
 import '../../data/models/user_model.dart';
 
 
+abstract class AuthRepository {
+  Future<void> signUp(RegistrationData data);
+}
+
+
 abstract class AuthEvent extends Equatable {
   @override
   List<Object> get props => [];

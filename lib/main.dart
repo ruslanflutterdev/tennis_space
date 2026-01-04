@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/registration_page.dart';
+import 'core/dependencies/dependencies_container.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'YOUR_SUPABASE_URL',
-    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    url: 'https://tdskgjxzjatyiryflyfb.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkc2tnanh6amF0eWlyeWZseWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjAxMjIsImV4cCI6MjA4MzA5NjEyMn0.EHNkB5zrsrHd94s7fN800Yg1U7GTR1CwjF74c4uliv0',
   );
 
   await initInjection();
@@ -24,11 +26,8 @@ class TennisSpaceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<AuthBloc>(), // sl = service locator
-      child: MaterialApp.router(
-        routerConfig: _router,
-        title: 'TennisSpace',
-      ),
+      create: (context) => sl<AuthBloc>(),
+      child: MaterialApp.router(routerConfig: _router, title: 'TennisSpace'),
     );
   }
 }
@@ -36,12 +35,35 @@ class TennisSpaceApp extends StatelessWidget {
 final _router = GoRouter(
   initialLocation: '/register',
   routes: [
-    GoRoute(path: '/register', builder: (context, state) => const RegistrationPage()),
-    // Пустые страницы ролей
-    GoRoute(path: '/coach', builder: (context, state) => const Scaffold(body: Center(child: Text("Кабинет Тренера по теннису")))),
-    GoRoute(path: '/fitness', builder: (context, state) => const Scaffold(body: Center(child: Text("Кабинет Тренера ОФП")))),
-    GoRoute(path: '/child', builder: (context, state) => const Scaffold(body: Center(child: Text("Кабинет Ребенка")))),
-    GoRoute(path: '/parent', builder: (context, state) => const Scaffold(body: Center(child: Text("Кабинет Родителя")))),
-    GoRoute(path: '/admin', builder: (context, state) => const Scaffold(body: Center(child: Text("Кабинет Админа")))),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegistrationPage(),
+    ),
+    GoRoute(
+      path: '/coach',
+      builder: (context, state) => const Scaffold(
+        body: Center(child: Text("Кабинет Тренера по теннису")),
+      ),
+    ),
+    GoRoute(
+      path: '/fitness',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text("Кабинет Тренера ОФП"))),
+    ),
+    GoRoute(
+      path: '/child',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text("Кабинет Ребенка"))),
+    ),
+    GoRoute(
+      path: '/parent',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text("Кабинет Родителя"))),
+    ),
+    GoRoute(
+      path: '/admin',
+      builder: (context, state) =>
+          const Scaffold(body: Center(child: Text("Кабинет Админа"))),
+    ),
   ],
 );
