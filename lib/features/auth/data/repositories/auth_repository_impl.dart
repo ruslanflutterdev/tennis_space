@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../presentation/bloc/auth_bloc.dart';
 import '../models/user_model.dart';
 
+
 class AuthRepositoryImpl implements AuthRepository {
   final SupabaseClient supabase;
 
@@ -17,6 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       if (res.user == null) throw Exception('Ошибка создания пользователя');
       final roleString = _mapRoleToString(data.role);
+
       await supabase.from('profiles').insert({
         'id': res.user!.id,
         'role': roleString,
@@ -27,8 +29,49 @@ class AuthRepositoryImpl implements AuthRepository {
         'gender': data.gender,
       });
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception('Ошибка регистрации: ${e.toString()}');
     }
+  }
+
+  @override
+  Future<UserRole> signIn(String email, String password) async {
+    try {
+      final AuthResponse res = await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (res.user == null) throw Exception('Ошибка входа');
+
+      final data = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', res.user!.id)
+          .single();
+
+      return _mapStringToRole(data['role'] as String);
+    } catch (e) {
+      throw Exception('Неверный логин или пароль');
+    }
+  }
+
+  @override
+  Future<void> signOut() async {
+    await supabase.auth.signOut();
+  }
+
+  @override
+  Future<void> resetPassword(String email) async {
+    try {
+      await supabase.auth.resetPasswordForEmail(email);
+    } catch (e) {
+      throw Exception('Не удалось отправить письмо: ${e.toString()}');
+    }
+  }
+
+  @override
+  UserRole? getCurrentUserRole() {
+    return null;
   }
 
   String _mapRoleToString(UserRole role) {
@@ -38,6 +81,17 @@ class AuthRepositoryImpl implements AuthRepository {
       case UserRole.child: return 'child';
       case UserRole.parent: return 'parent';
       case UserRole.admin: return 'admin';
+    }
+  }
+
+  UserRole _mapStringToRole(String role) {
+    switch (role) {
+      case 'tennis_coach': return UserRole.tennisCoach;
+      case 'fitness_coach': return UserRole.fitnessCoach;
+      case 'child': return UserRole.child;
+      case 'parent': return UserRole.parent;
+      case 'admin': return UserRole.admin;
+      default: return UserRole.child;
     }
   }
 }

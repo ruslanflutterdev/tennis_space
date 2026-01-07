@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/auth/presentation/pages/registration_page.dart';
 import 'core/dependencies/dependencies_container.dart';
+import 'features/auth/presentation/screens/forgot_password_screen.dart';
+import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/auth/presentation/screens/registration_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,43 +29,43 @@ class TennisSpaceApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<AuthBloc>(),
-      child: MaterialApp.router(routerConfig: _router, title: 'TennisSpace'),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        title: 'TennisSpace',
+        theme: ThemeData(primarySwatch: Colors.green),
+      ),
     );
   }
 }
 
 final _router = GoRouter(
-  initialLocation: '/register',
+  initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/register',
-      builder: (context, state) => const RegistrationPage(),
-    ),
-    GoRoute(
-      path: '/coach',
-      builder: (context, state) => const Scaffold(
-        body: Center(child: Text("Кабинет Тренера по теннису")),
-      ),
-    ),
-    GoRoute(
-      path: '/fitness',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text("Кабинет Тренера ОФП"))),
-    ),
-    GoRoute(
-      path: '/child',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text("Кабинет Ребенка"))),
-    ),
-    GoRoute(
-      path: '/parent',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text("Кабинет Родителя"))),
-    ),
-    GoRoute(
-      path: '/admin',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text("Кабинет Админа"))),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/register', builder: (context, state) => const RegistrationScreen()),
+    GoRoute(path: '/forgot_password', builder: (context, state) => const ForgotPasswordScreen()),
+    GoRoute(path: '/coach', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера по теннису")),
+    GoRoute(path: '/fitness', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера ОФП")),
+    GoRoute(path: '/child', builder: (context, state) => _buildRolePage(context, "Кабинет Ребенка")),
+    GoRoute(path: '/parent', builder: (context, state) => _buildRolePage(context, "Кабинет Родителя")),
+    GoRoute(path: '/admin', builder: (context, state) => _buildRolePage(context, "Кабинет Админа")),
   ],
 );
+
+Widget _buildRolePage(BuildContext context, String title) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(title),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            context.read<AuthBloc>().add(AuthSignOutRequested());
+            context.go('/');
+          },
+        )
+      ],
+    ),
+    body: Center(child: Text(title)),
+  );
+}
