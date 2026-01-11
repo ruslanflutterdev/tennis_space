@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../presentation/bloc/auth_bloc.dart';
 import '../models/user_model.dart';
+import 'auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final SupabaseClient supabase;
@@ -14,10 +14,8 @@ class AuthRepositoryImpl implements AuthRepository {
         email: data.email,
         password: data.password,
       );
-
       if (res.user == null) throw Exception('Ошибка создания пользователя');
       final roleString = _mapRoleToString(data.role);
-
       await supabase.from('profiles').insert({
         'id': res.user!.id,
         'role': roleString,
@@ -72,11 +70,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  UserRole? getCurrentUserRole() {
-    return null;
-  }
-
   String _mapRoleToString(UserRole role) {
     switch (role) {
       case UserRole.tennisCoach:
@@ -106,86 +99,6 @@ class AuthRepositoryImpl implements AuthRepository {
         return UserRole.admin;
       default:
         return UserRole.child;
-    }
-  }
-
-  // Метод для получения списка клубов
-  @override
-  Future<List<Map<String, dynamic>>> getClubs() async {
-    try {
-      final List<dynamic> data = await supabase
-          .from('clubs')
-          .select('id, name')
-          .order('name', ascending: true);
-
-      return data.cast<Map<String, dynamic>>();
-    } catch (e) {
-      throw Exception('Не удалось загрузить клубы: $e');
-    }
-  }
-
-  @override
-  Future<void> completeProfile({
-    required String userId,
-    required String country,
-    required String city,
-    int? clubId,
-    String? clubName,
-  }) async {
-    final updates = {
-      'country': country,
-      'city': city,
-      'club_id': clubId,
-      'club_name': clubName,
-    };
-    await supabase.from('profiles').update(updates).eq('id', userId);
-  }
-
-  @override
-  Future<Map<String, dynamic>> getUserProfile(String userId) async {
-    try {
-      final data = await supabase
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .single();
-      return data;
-    } catch (e) {
-      throw Exception('Ошибка загрузки профиля: $e');
-    }
-  }
-  @override
-  Future<void> updateProfile({
-    required String userId,
-    required String lastName,
-    required String firstName,
-    String? middleName,
-    required DateTime birthDate,
-    required String gender,
-    required String country,
-    required String city,
-    int? clubId,
-    String? clubName,
-  }) async {
-    try {
-      final updates = {
-        'last_name': lastName,
-        'first_name': firstName,
-        'middle_name': middleName,
-        'birth_date': birthDate.toIso8601String(),
-        'gender': gender,
-        'country': country,
-        'city': city,
-        'club_id': clubId,
-        'club_name': clubName,
-      };
-
-      await supabase
-          .from('profiles')
-          .update(updates)
-          .eq('id', userId);
-    } catch (e) {
-      throw Exception('Ошибка обновления профиля: $e');
     }
   }
 }

@@ -1,39 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../data/models/user_model.dart';
-
-
-
-abstract class AuthRepository {
-  Future<void> signUp(RegistrationData data);
-  Future<Map<String, dynamic>> signIn(String email, String password);
-  Future<void> signOut();
-  Future<void> resetPassword(String email);
-  UserRole? getCurrentUserRole();
-  Future<List<Map<String, dynamic>>> getClubs();
-  Future<Map<String, dynamic>> getUserProfile(String userId);
-
-  Future<void> completeProfile({
-    required String userId,
-    required String country,
-    required String city,
-    int? clubId,
-    String? clubName,
-  });
-
-  Future<void> updateProfile({
-    required String userId,
-    required String lastName,
-    required String firstName,
-    String? middleName,
-    required DateTime birthDate,
-    required String gender,
-    required String country,
-    required String city,
-    int? clubId,
-    String? clubName,
-  });
-}
+import '../data/models/user_model.dart';
+import '../data/repositories/auth_repository.dart';
 
 abstract class AuthEvent extends Equatable {
   @override
@@ -64,8 +32,8 @@ abstract class AuthState extends Equatable {
 }
 
 class AuthInitial extends AuthState {}
-class AuthLoading extends AuthState {}
 
+class AuthLoading extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final UserRole? role;
@@ -77,9 +45,6 @@ class AuthSuccess extends AuthState {
   @override
   List<Object?> get props => [role, clubId, message];
 }
-
-
-
 
 class AuthFailure extends AuthState {
   final String message;
@@ -93,7 +58,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
-
     on<AuthSignUpRequested>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -109,10 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final result = await authRepository.signIn(event.email, event.password);
 
-        emit(AuthSuccess(
-            role: result['role'],
-            clubId: result['clubId']
-        ));
+        emit(AuthSuccess(role: result['role'], clubId: result['clubId']));
       } catch (e) {
         emit(AuthFailure(e.toString()));
       }

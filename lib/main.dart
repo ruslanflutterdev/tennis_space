@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
+
 import 'core/dependencies/dependencies_container.dart';
-import 'features/auth/presentation/screens/forgot_password_screen.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/auth/presentation/screens/profile_completion_screen.dart';
-import 'features/auth/presentation/screens/profile_edit_screen.dart';
-import 'features/auth/presentation/screens/registration_screen.dart';
+import 'core/router/app_router.dart'; // Импорт нашего роутера
+import 'features/auth/viewmodel/auth_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,55 +28,10 @@ class TennisSpaceApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<AuthBloc>(),
       child: MaterialApp.router(
-        routerConfig: _router,
+        routerConfig: appRouter,
         title: 'TennisSpace',
         theme: ThemeData(primarySwatch: Colors.green),
       ),
     );
   }
-}
-
-final _router = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
-    GoRoute(path: '/register', builder: (context, state) => const RegistrationScreen()),
-    GoRoute(path: '/forgot_password', builder: (context, state) => const ForgotPasswordScreen()),
-    GoRoute(path: '/profile_completion', builder: (context, state) => const ProfileCompletionScreen()),
-    GoRoute(path: '/coach', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера по теннису")),
-    GoRoute(path: '/fitness', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера ОФП")),
-    GoRoute(path: '/child', builder: (context, state) => _buildRolePage(context, "Кабинет Ребенка")),
-    GoRoute(path: '/parent', builder: (context, state) => _buildRolePage(context, "Кабинет Родителя")),
-    GoRoute(path: '/admin', builder: (context, state) => _buildRolePage(context, "Кабинет Админа")),
-    GoRoute(
-        path: '/profile_edit',
-        builder: (context, state) => const ProfileEditScreen()
-    ),
-  ],
-);
-
-Widget _buildRolePage(BuildContext context, String title) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(title),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.edit),
-          tooltip: 'Редактировать профиль',
-          onPressed: () {
-            context.push('/profile_edit');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.logout),
-          tooltip: 'Выйти',
-          onPressed: () {
-            context.read<AuthBloc>().add(AuthSignOutRequested());
-            context.go('/');
-          },
-        )
-      ],
-    ),
-    body: Center(child: Text(title)),
-  );
 }

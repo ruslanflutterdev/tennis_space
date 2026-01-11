@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/user_model.dart';
-import '../bloc/auth_bloc.dart';
+import '../../viewmodel/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,16 +37,28 @@ class _LoginScreenState extends State<LoginScreen> {
               context.go('/profile_completion');
             } else if (state.role != null) {
               switch (state.role!) {
-                case UserRole.tennisCoach: context.go('/coach'); break;
-                case UserRole.fitnessCoach: context.go('/fitness'); break;
-                case UserRole.child: context.go('/child'); break;
-                case UserRole.parent: context.go('/parent'); break;
-                case UserRole.admin: context.go('/admin'); break;
+                case UserRole.tennisCoach:
+                  context.go('/coach');
+                  break;
+                case UserRole.fitnessCoach:
+                  context.go('/fitness');
+                  break;
+                case UserRole.child:
+                  context.go('/child');
+                  break;
+                case UserRole.parent:
+                  context.go('/parent');
+                  break;
+                case UserRole.admin:
+                  context.go('/admin');
+                  break;
               }
             }
           }
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         child: Padding(
@@ -68,8 +80,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Пароль',
                     suffixIcon: IconButton(
-                      icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () => setState(
+                        () => _isPasswordVisible = !_isPasswordVisible,
+                      ),
                     ),
                   ),
                   validator: (v) => v!.isEmpty ? 'Введите пароль' : null,
@@ -84,13 +102,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _login,
-                  style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
                   child: const Text('Войти'),
                 ),
                 const SizedBox(height: 20),
                 OutlinedButton(
                   onPressed: () => context.push('/register'),
-                  style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
                   child: const Text('Зарегистрироваться'),
                 ),
               ],
