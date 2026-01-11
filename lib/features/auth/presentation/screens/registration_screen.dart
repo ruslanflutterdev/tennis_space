@@ -109,30 +109,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess && state.role != null) {
-            switch (state.role!) {
-              case UserRole.tennisCoach:
-                context.go('/coach');
-                break;
-              case UserRole.fitnessCoach:
-                context.go('/fitness');
-                break;
-              case UserRole.child:
-                context.go('/child');
-                break;
-              case UserRole.parent:
-                context.go('/parent');
-                break;
-              case UserRole.admin:
-                context.go('/admin');
-                break;
-            }
+          if (state is AuthSuccess) {
+            context.go('/profile_completion');
           }
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: Colors.red,
               ),
             );
           }

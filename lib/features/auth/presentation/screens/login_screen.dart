@@ -29,15 +29,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Вход в TennisSpace')),
+
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess && state.role != null) {
-            switch (state.role!) {
-              case UserRole.tennisCoach: context.go('/coach'); break;
-              case UserRole.fitnessCoach: context.go('/fitness'); break;
-              case UserRole.child: context.go('/child'); break;
-              case UserRole.parent: context.go('/parent'); break;
-              case UserRole.admin: context.go('/admin'); break;
+          if (state is AuthSuccess) {
+            if (state.clubId == null) {
+              context.go('/profile_completion');
+            } else if (state.role != null) {
+              switch (state.role!) {
+                case UserRole.tennisCoach: context.go('/coach'); break;
+                case UserRole.fitnessCoach: context.go('/fitness'); break;
+                case UserRole.child: context.go('/child'); break;
+                case UserRole.parent: context.go('/parent'); break;
+                case UserRole.admin: context.go('/admin'); break;
+              }
             }
           }
           if (state is AuthFailure) {

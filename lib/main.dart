@@ -6,6 +6,7 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'core/dependencies/dependencies_container.dart';
 import 'features/auth/presentation/screens/forgot_password_screen.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/auth/presentation/screens/profile_completion_screen.dart';
 import 'features/auth/presentation/screens/registration_screen.dart';
 
 void main() async {
@@ -44,6 +45,7 @@ final _router = GoRouter(
     GoRoute(path: '/', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/register', builder: (context, state) => const RegistrationScreen()),
     GoRoute(path: '/forgot_password', builder: (context, state) => const ForgotPasswordScreen()),
+    GoRoute(path: '/profile_completion', builder: (context, state) => const ProfileCompletionScreen()),
     GoRoute(path: '/coach', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера по теннису")),
     GoRoute(path: '/fitness', builder: (context, state) => _buildRolePage(context, "Кабинет Тренера ОФП")),
     GoRoute(path: '/child', builder: (context, state) => _buildRolePage(context, "Кабинет Ребенка")),

@@ -6,10 +6,19 @@ import '../../data/models/user_model.dart';
 
 abstract class AuthRepository {
   Future<void> signUp(RegistrationData data);
-  Future<UserRole> signIn(String email, String password);
+  Future<Map<String, dynamic>> signIn(String email, String password);
   Future<void> signOut();
   Future<void> resetPassword(String email);
   UserRole? getCurrentUserRole();
+  Future<List<Map<String, dynamic>>> getClubs();
+
+  Future<void> completeProfile({
+    required String userId,
+    required String country,
+    required String city,
+    int? clubId,
+    String? clubName,
+  });
 }
 
 abstract class AuthEvent extends Equatable {
@@ -42,15 +51,21 @@ abstract class AuthState extends Equatable {
 
 class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
+
+
 class AuthSuccess extends AuthState {
   final UserRole? role;
+  final int? clubId;
   final String? message;
 
-  AuthSuccess({this.role, this.message});
+  AuthSuccess({this.role, this.clubId, this.message});
 
   @override
-  List<Object?> get props => [role, message];
+  List<Object?> get props => [role, clubId, message];
 }
+
+
+
 
 class AuthFailure extends AuthState {
   final String message;
@@ -78,8 +93,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignInRequested>((event, emit) async {
       emit(AuthLoading());
       try {
-        final role = await authRepository.signIn(event.email, event.password);
-        emit(AuthSuccess(role: role));
+        final result = await authRepository.signIn(event.email, event.password);
+
+        emit(AuthSuccess(
+            role: result['role'],
+            clubId: result['clubId']
+        ));
       } catch (e) {
         emit(AuthFailure(e.toString()));
       }
