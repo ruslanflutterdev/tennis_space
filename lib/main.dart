@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'core/dependencies/dependencies_container.dart';
-import 'core/router/app_router.dart'; // Импорт нашего роутера
+import 'core/router/app_router.dart';
 import 'features/auth/viewmodel/auth_bloc.dart';
 
 void main() async {
