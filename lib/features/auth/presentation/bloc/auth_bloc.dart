@@ -11,9 +11,23 @@ abstract class AuthRepository {
   Future<void> resetPassword(String email);
   UserRole? getCurrentUserRole();
   Future<List<Map<String, dynamic>>> getClubs();
+  Future<Map<String, dynamic>> getUserProfile(String userId);
 
   Future<void> completeProfile({
     required String userId,
+    required String country,
+    required String city,
+    int? clubId,
+    String? clubName,
+  });
+
+  Future<void> updateProfile({
+    required String userId,
+    required String lastName,
+    required String firstName,
+    String? middleName,
+    required DateTime birthDate,
+    required String gender,
     required String country,
     required String city,
     int? clubId,

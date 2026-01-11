@@ -7,6 +7,7 @@ import 'core/dependencies/dependencies_container.dart';
 import 'features/auth/presentation/screens/forgot_password_screen.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/profile_completion_screen.dart';
+import 'features/auth/presentation/screens/profile_edit_screen.dart';
 import 'features/auth/presentation/screens/registration_screen.dart';
 
 void main() async {
@@ -51,6 +52,10 @@ final _router = GoRouter(
     GoRoute(path: '/child', builder: (context, state) => _buildRolePage(context, "Кабинет Ребенка")),
     GoRoute(path: '/parent', builder: (context, state) => _buildRolePage(context, "Кабинет Родителя")),
     GoRoute(path: '/admin', builder: (context, state) => _buildRolePage(context, "Кабинет Админа")),
+    GoRoute(
+        path: '/profile_edit',
+        builder: (context, state) => const ProfileEditScreen()
+    ),
   ],
 );
 
@@ -60,7 +65,15 @@ Widget _buildRolePage(BuildContext context, String title) {
       title: Text(title),
       actions: [
         IconButton(
+          icon: const Icon(Icons.edit),
+          tooltip: 'Редактировать профиль',
+          onPressed: () {
+            context.push('/profile_edit');
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.logout),
+          tooltip: 'Выйти',
           onPressed: () {
             context.read<AuthBloc>().add(AuthSignOutRequested());
             context.go('/');

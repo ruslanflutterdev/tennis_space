@@ -52,7 +52,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final role = _mapStringToRole(data['role'] as String);
       final clubId = data['club_id'];
-      // Возвращаем Map, чтобы передать оба значения
       return {'role': role, 'clubId': clubId};
     } catch (e) {
       throw Exception('Неверный логин или пароль');
@@ -133,12 +132,52 @@ class AuthRepositoryImpl implements AuthRepository {
     int? clubId,
     String? clubName,
   }) async {
+    final updates = {
+      'country': country,
+      'city': city,
+      'club_id': clubId,
+      'club_name': clubName,
+    };
+    await supabase.from('profiles').update(updates).eq('id', userId);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getUserProfile(String userId) async {
+    try {
+      final data = await supabase
+          .from('profiles')
+          .select()
+          .eq('id', userId)
+          .single();
+      return data;
+    } catch (e) {
+      throw Exception('Ошибка загрузки профиля: $e');
+    }
+  }
+  @override
+  Future<void> updateProfile({
+    required String userId,
+    required String lastName,
+    required String firstName,
+    String? middleName,
+    required DateTime birthDate,
+    required String gender,
+    required String country,
+    required String city,
+    int? clubId,
+    String? clubName,
+  }) async {
     try {
       final updates = {
+        'last_name': lastName,
+        'first_name': firstName,
+        'middle_name': middleName,
+        'birth_date': birthDate.toIso8601String(),
+        'gender': gender,
         'country': country,
         'city': city,
-        'club_name': clubName,
         'club_id': clubId,
+        'club_name': clubName,
       };
 
       await supabase
@@ -146,7 +185,7 @@ class AuthRepositoryImpl implements AuthRepository {
           .update(updates)
           .eq('id', userId);
     } catch (e) {
-      throw Exception('Ошибка сохранения профиля: $e');
+      throw Exception('Ошибка обновления профиля: $e');
     }
   }
 }
